@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "album-cards"
+version = "0.1.0"
+description = ""
+authors = ["Erik Hetzner <egh@e6h.org>"]
+readme = "README.md"
+packages = [{include = "album_cards"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+python3-discogs-client = "*"
+pillow = "*"
+requests = "*"
+html2image = "*"
+chevron = "*"
+spotipy = "^2.22.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+black = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
