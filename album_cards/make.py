@@ -7,7 +7,6 @@ import requests
 import spotipy
 from html2image import Html2Image
 from PIL import Image
-from PIL.ExifTags import Base
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 
 
@@ -29,13 +28,6 @@ HTML = """
 {{artist}}
 """
 
-TEXT = """
-{{album}}
-{{#year}}
-({{year}})
-{{/year}} / {{artist}}
-"""
-
 SCOPE = "user-library-read"
 
 
@@ -49,13 +41,10 @@ def make_image_from_url(url, output, hti, artist, album, year):
     textf = f"{output}_text.png"
     md = {"year": year, "album": album, "artist": artist}
     html = chevron.render(HTML, md)
-    text = chevron.render(TEXT, md)
     hti.screenshot(html_str=html, css_str=CSS, save_as=textf, size=(550, 250))
     imgtext = Image.open(os.path.join(tmpdir, textf))
     out.paste(imgtext, (25, 625), mask=imgtext)
-    exif = img.getexif()
-    exif[Base.ImageDescription.value] = text
-    out.save(output, exif=exif)
+    out.save(output)
 
 
 with tempfile.TemporaryDirectory() as tmpdir:
