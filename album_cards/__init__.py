@@ -64,3 +64,23 @@ def make_card(cover_url, artist, album, year, qr_url) -> Image:
         imgtext = render_html(tmpdir, artist, album, year, qr_url)
         out.paste(imgtext, (25, 625), mask=imgtext)
         return out
+
+
+def make_card_spotify(album) -> Image:
+    return make_card(
+        cover_url=album["images"][0]["url"],
+        artist=", ".join([artist["name"] for artist in album["artists"]]),
+        album=album["name"],
+        year=album["release_date"][0:4],
+        qr_url=album["external_urls"]["spotify"],
+    )
+
+
+def make_card_discogs(release) -> Image:
+    return make_card(
+        cover_url=release.images[0]["uri"],
+        artist=release.artists_sort,
+        album=release.title,
+        year=release.year,
+        qr_url=release.url,
+    )
