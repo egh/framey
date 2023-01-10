@@ -1,14 +1,18 @@
+import importlib.resources
 import os
 import tempfile
 
 import chevron
-import importlib.resources
+import discogs_client
 import qrcode
 import qrcode.image.svg
 import requests
+import spotipy
 from html2image import Html2Image
 from PIL import Image
+from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 
+SCOPE = "user-library-read"
 USER_AGENT = "album_cards/0.1"
 HEADERS = {
     "User-Agent": USER_AGENT,
@@ -84,3 +88,23 @@ def make_card_discogs(release) -> Image:
         year=release.year,
         qr_url=release.url,
     )
+
+
+def make_spotify_cards():
+    d = discogs_client.Client(USER_AGENT, user_token=os.getenv("TOKEN"))
+    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=SCOPE))
+    results = sp.current_user_saved_albums()
+    albums = results["items"]
+    while results["next"]:
+        results = sp.next(results)
+        albums.extend(results["items"])
+
+    for item in albums:
+        make_card_spotify(item["album"]).save(f"{item['album']['id']}.jpeg")
+
+
+def make_discogs_cards():
+    d = discogs_client.Client(USER_AGENT, user_token=os.getenv("TOKEN"))
+    me = d.identity()
+    for item in me.collection_folders[0].releases:
+        make_card_discogs(item.release).save(f"{item.release.id}.jpeg")
