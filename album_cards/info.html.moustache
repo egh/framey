@@ -1,0 +1,9 @@
+<img style="float: right; height: 150" src={{qrcode}}>
+<i>{{album}}</i>
+{{#year}}
+({{year}})
+{{/year}}
+<br>
+<br>
+{{artist}}
+<br>

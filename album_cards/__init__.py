@@ -2,6 +2,7 @@ import os
 import tempfile
 
 import chevron
+import importlib.resources
 import qrcode
 import qrcode.image.svg
 import requests
@@ -13,21 +14,16 @@ HEADERS = {
     "User-Agent": USER_AGENT,
 }
 
-CSS = """
-* { font-family: "Noto Sans"; font-size: 12pt }
-"""
-
-HTML = """
-<img style="float: right; height: 150" src={{qrcode}}>
-<i>{{album}}</i>
-{{#year}}
-({{year}})
-{{/year}}
-<br>
-<br>
-{{artist}}
-<br>
-"""
+HTML_TEMPLATE = (
+    importlib.resources.files("album_cards")
+    .joinpath("info.html.moustache")
+    .read_text(encoding="utf-8")
+)
+CSS = (
+    importlib.resources.files("album_cards")
+    .joinpath("info.css")
+    .read_text(encoding="utf-8")
+)
 
 
 def make_qrcode(url: str, tmpdir) -> str:
@@ -38,11 +34,14 @@ def make_qrcode(url: str, tmpdir) -> str:
 
 
 def render_html(tmpdir, artist, album, year, qr_url) -> Image:
+    """Load a textual resource file."""
+
     hti = Html2Image()
     hti.output_path = tmpdir
     qrcode_file = make_qrcode(qr_url, tmpdir=tmpdir)
     html = chevron.render(
-        HTML, {"year": year, "album": album, "artist": artist, "qrcode": qrcode_file}
+        HTML_TEMPLATE,
+        {"year": year, "album": album, "artist": artist, "qrcode": qrcode_file},
     )
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False, dir=tmpdir) as tmp:
         hti.screenshot(
