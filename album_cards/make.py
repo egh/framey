@@ -1,82 +1,42 @@
 import os
 import tempfile
 
-import chevron
 import discogs_client
-import requests
 import spotipy
-from html2image import Html2Image
-from PIL import Image
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
+from album_cards import make_card, USER_AGENT
 
-
-USER_AGENT = "album_cards/0.1"
-HEADERS = {
-    "User-Agent": USER_AGENT,
-}
-CSS = """
-* { font-family: "Noto Sans"; font-size: 20pt }
-"""
-
-HTML = """
-<i>{{album}}</i>
-{{#year}}
-({{year}})
-{{/year}}
-<br>
-<br>
-{{artist}}
-"""
 
 SCOPE = "user-library-read"
 
+d = discogs_client.Client(USER_AGENT, user_token=os.getenv("TOKEN"))
+me = d.identity()
+for item in me.collection_folders[0].releases:
+    release = item.release
+    image = make_card(
+        cover_url=release.images[0]["uri"],
+        artist=release.artists_sort,
+        album=release.title,
+        year=release.year,
+        qr_url=release.url,
+    )
+    image.save(f"{release.id}.jpeg")
 
-def make_image_from_url(url, output, hti, artist, album, year):
-    r = requests.get(url, headers=HEADERS, stream=True)
-    r.raise_for_status()
-    img = Image.open(r.raw)
-    img = img.resize((600, 600))
-    out = Image.new(mode=img.mode, size=(600, 900), color="white")
-    out.paste(img)
-    textf = f"{output}_text.png"
-    md = {"year": year, "album": album, "artist": artist}
-    html = chevron.render(HTML, md)
-    hti.screenshot(html_str=html, css_str=CSS, save_as=textf, size=(550, 250))
-    imgtext = Image.open(os.path.join(tmpdir, textf))
-    out.paste(imgtext, (25, 625), mask=imgtext)
-    out.save(output)
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=SCOPE))
 
+results = sp.current_user_saved_albums()
+albums = results["items"]
+while results["next"]:
+    results = sp.next(results)
+    albums.extend(results["items"])
 
-with tempfile.TemporaryDirectory() as tmpdir:
-    hti = Html2Image()
-    hti.output_path = tmpdir
-
-    d = discogs_client.Client(USER_AGENT, user_token=os.getenv("TOKEN"))
-    me = d.identity()
-    for item in me.collection_folders[0].releases:
-        release = item.release
-        uri = release.images[0]["uri"]
-        make_image_from_url(
-            uri,
-            f"{release.id}.jpeg",
-            hti,
-            release.artists_sort,
-            release.title,
-            release.year,
-        )
-
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=SCOPE))
-
-    results = sp.current_user_saved_albums()
-    albums = results["items"]
-    while results["next"]:
-        results = sp.next(results)
-        albums.extend(results["items"])
-
-    for item in albums:
-        album = item["album"]
-        url = item["album"]["images"][0]["url"]
-        title = album["name"]
-        artist = ", ".join([artist["name"] for artist in album["artists"]])
-        year = album["release_date"][0:4]
-        make_image_from_url(url, f"{album['id']}.jpeg", hti, artist, title, year)
+for item in albums:
+    album = item["album"]
+    image = make_card(
+        cover_url=item["album"]["images"][0]["url"],
+        artist=", ".join([artist["name"] for artist in album["artists"]]),
+        album=album["name"],
+        year=album["release_date"][0:4],
+        qr_url=album["external_urls"]["spotify"],
+    )
+    image.save(f"{album['id']}.jpeg")
