@@ -4,7 +4,18 @@ import pytest
 import requests
 import requests_mock
 
-from album_cards import make_qrcode, render_html, make_card
+from album_cards import make_qrcode, render_html, make_card, Album
+
+
+@pytest.fixture
+def album():
+    return Album(
+        cover_url="http://example.com/cover.jpeg",
+        artist="Daniel Case",
+        title="Engigstciak",
+        year="2000",
+        qr_url="http://example.org",
+    )
 
 
 def test_make_qrcode():
@@ -13,24 +24,16 @@ def test_make_qrcode():
         assert os.path.getsize(filename) > 1
 
 
-def test_render_html():
+def test_render_html(album):
     with tempfile.TemporaryDirectory() as tmpdir:
-        image = render_html(
-            tmpdir, "John Doe", "Untitled", "1999", "http://example.org"
-        )
+        image = render_html(tmpdir, album)
         assert image.size == (550, 250)
 
 
-def test_make_card(requests_mock):
+def test_make_card(requests_mock, album):
     requests_mock.get(
         "http://example.com/cover.jpeg", body=open("test_data/cover.jpeg", "rb")
     )
     with tempfile.TemporaryDirectory() as tmpdir:
-        image = make_card(
-            "http://example.com/cover.jpeg",
-            "Daniel Case",
-            "Engigstciak",
-            "2000",
-            "http://example.org",
-        )
+        image = make_card(album)
         assert image.size == (600, 900)

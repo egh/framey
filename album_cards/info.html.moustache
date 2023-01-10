@@ -1,5 +1,5 @@
 <img style="float: right; height: 150" src={{qrcode}}>
-<i>{{album}}</i>
+<i>{{title}}</i>
 {{#year}}
 ({{year}})
 {{/year}}
