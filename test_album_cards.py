@@ -14,7 +14,8 @@ def album():
         artist="Daniel Case",
         title="Engigstciak",
         year="2000",
-        qr_url="http://example.org",
+        spotify_url="http://example.org",
+        discogs_url="http://example.com",
     )
 
 

@@ -3,6 +3,7 @@ import os
 import tempfile
 from dataclasses import dataclass
 
+from typing import Optional
 import chevron
 import discogs_client
 import qrcode
@@ -11,6 +12,8 @@ import requests
 import spotipy
 from html2image import Html2Image
 from PIL import Image
+from qrcode.image.styledpil import StyledPilImage
+from qrcode.image.styles.colormasks import SolidFillColorMask
 from spotipy.oauth2 import SpotifyOAuth
 
 SCOPE = "user-library-read"
@@ -29,6 +32,12 @@ CSS = (
     .joinpath("info.css")
     .read_text(encoding="utf-8")
 )
+SPOTIFY_PNG = Image.open(
+    importlib.resources.files("album_cards").joinpath("spotify.png")
+)
+DISCOGS_PNG = Image.open(
+    importlib.resources.files("album_cards").joinpath("discogs.png")
+)
 
 
 @dataclass
@@ -36,13 +45,22 @@ class Album:
     title: str
     artist: str
     year: str
-    qr_url: str
+    spotify_url: Optional[str]
+    discogs_url: Optional[str]
     cover_url: str
 
 
-def make_qrcode(url: str, tmpdir) -> str:
-    img = qrcode.make(url, image_factory=qrcode.image.svg.SvgImage)
-    with tempfile.NamedTemporaryFile(suffix=".svg", delete=False, dir=tmpdir) as out:
+def make_qrcode(url: str, embed_image: Image, color: tuple, tmpdir) -> str:
+    if url is None:
+        return ""
+    qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
+    qr.add_data(url)
+    img = qr.make_image(
+        image_factory=StyledPilImage,
+        embeded_image=embed_image,
+        color_mask=SolidFillColorMask(front_color=color),
+    )
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False, dir=tmpdir) as out:
         img.save(out)
         return out.name
 
@@ -50,14 +68,24 @@ def make_qrcode(url: str, tmpdir) -> str:
 def render_html(tmpdir, album: Album) -> Image:
     hti = Html2Image()
     hti.output_path = tmpdir
-    qrcode_file = make_qrcode(album.qr_url, tmpdir=tmpdir)
     html = chevron.render(
         HTML_TEMPLATE,
         {
             "year": album.year,
             "title": album.title,
             "artist": album.artist,
-            "qrcode": qrcode_file,
+            "spotify_qrcode": make_qrcode(
+                album.spotify_url,
+                embed_image=SPOTIFY_PNG,
+                color=(46, 189, 89),
+                tmpdir=tmpdir,
+            ),
+            "discogs_qrcode": make_qrcode(
+                album.discogs_url,
+                embed_image=DISCOGS_PNG,
+                color=(0, 0, 0),
+                tmpdir=tmpdir,
+            ),
         },
     )
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False, dir=tmpdir) as tmp:
@@ -90,7 +118,8 @@ def make_card_spotify(album) -> Image:
             artist=", ".join([artist["name"] for artist in album["artists"]]),
             title=album["name"],
             year=album["release_date"][0:4],
-            qr_url=album["external_urls"]["spotify"],
+            spotify_url=album["external_urls"]["spotify"],
+            discogs_url=None,
         )
     )
 
@@ -102,7 +131,8 @@ def make_card_discogs(release) -> Image:
             artist=release.artists_sort,
             title=release.title,
             year=release.year,
-            qr_url=release.url,
+            discogs_url=release.url,
+            spotify_url=None,
         )
     )
 

@@ -1,4 +1,25 @@
 * {
   font-family: "Special Elite";
-  font-size: 12pt;
+  font-size: 14pt;
+}
+
+img.qrcode {
+  height: 150px;
+  width: 150px;
+}
+
+img.discogs {
+  position: absolute;
+  bottom: 250px;
+  left: 0px;
+  top: 100px;
+  right: 150px;
+}
+
+img.spotify {
+  position: absolute;
+  bottom: 250px;
+  left: 400px;
+  top: 100px;
+  right: 550px;
 }

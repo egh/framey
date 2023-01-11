@@ -1,9 +1,15 @@
-<img style="float: right; height: 150" src={{qrcode}}>
-<i>{{title}}</i>
-{{#year}}
-({{year}})
-{{/year}}
-<br>
-<br>
-{{artist}}
-<br>
+<div class="info">
+  <i>{{title}}</i>
+  {{#year}}
+  ({{year}})
+  {{/year}}
+  <br>
+  <br>
+  {{artist}}
+</div>
+{{#spotify_qrcode}}
+<img class="spotify qrcode" src={{spotify_qrcode}}>
+{{/spotify_qrcode}}
+{{#discogs_qrcode}}
+<img class="discogs qrcode" src={{discogs_qrcode}}>
+{{/discogs_qrcode}}
