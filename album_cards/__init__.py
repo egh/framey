@@ -39,6 +39,9 @@ DISCOGS_PNG = Image.open(
     importlib.resources.files("album_cards").joinpath("discogs.png")
 )
 
+DISCOGS_CLIENT = discogs_client.Client(USER_AGENT, user_token=os.getenv("TOKEN"))
+SPOTIFY_CLIENT = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=SCOPE))
+
 
 @dataclass
 class Album:
@@ -111,46 +114,59 @@ def make_card(album: Album) -> Image:
         return out
 
 
-def make_card_spotify(album) -> Image:
-    return make_card(
-        Album(
-            cover_url=album["images"][0]["url"],
-            artist=", ".join([artist["name"] for artist in album["artists"]]),
-            title=album["name"],
-            year=album["release_date"][0:4],
-            spotify_url=album["external_urls"]["spotify"],
-            discogs_url=None,
-        )
+def make_spotify_album(item) -> Album:
+    return Album(
+        cover_url=item["images"][0]["url"],
+        artist=", ".join([artist["name"] for artist in item["artists"]]),
+        title=item["name"],
+        year=item["release_date"][0:4],
+        spotify_url=item["external_urls"]["spotify"],
+        discogs_url=None,
     )
 
 
-def make_card_discogs(release) -> Image:
-    return make_card(
-        Album(
-            cover_url=release.images[0]["uri"],
-            artist=release.artists_sort,
-            title=release.title,
-            year=release.year,
-            discogs_url=release.url,
-            spotify_url=None,
-        )
+def make_discogs_album(release) -> Album:
+    return Album(
+        cover_url=release.images[0]["uri"],
+        artist=release.artists_sort,
+        title=release.title,
+        year=release.year,
+        discogs_url=release.url,
+        spotify_url=None,
     )
+
+
+def get_spotify_url(album):
+    results = SPOTIFY_CLIENT.search(
+        q=f"artist:{album.artist} album:{album.title}", type="album"
+    )["albums"]["items"]
+    if len(results) == 0:
+        return None
+    return results[0]["external_urls"]["spotify"]
+
+
+def get_discogs_url(album):
+    results = DISCOGS_CLIENT.search(album.title, artist=album.artist, type="master")
+    if len(results) == 0:
+        return None
+    return f"https://www.discogs.com{results[0].url}"
 
 
 def make_spotify_cards():
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=SCOPE))
-    results = sp.current_user_saved_albums()
+    results = SPOTIFY_CLIENT.current_user_saved_albums()
     albums = results["items"]
     while results["next"]:
-        results = sp.next(results)
+        results = SPOTIFY_CLIENT.next(results)
         albums.extend(results["items"])
 
     for item in albums:
-        make_card_spotify(item["album"]).save(f"{item['album']['id']}.jpeg")
+        album = make_spotify_album(item["album"])
+        album.discogs_url = get_discogs_url(album)
+        make_card(album).save(f"{item['album']['id']}.jpeg")
 
 
 def make_discogs_cards():
-    d = discogs_client.Client(USER_AGENT, user_token=os.getenv("TOKEN"))
-    me = d.identity()
-    for item in me.collection_folders[0].releases:
-        make_card_discogs(item.release).save(f"{item.release.id}.jpeg")
+    for item in DISCOGS_CLIENT.identity().collection_folders[0].releases:
+        album = make_discogs_album(item.release)
+        album.spotify_url = get_spotify_url(album)
+        make_card(album).save(f"{item.release.id}.jpeg")

@@ -1,10 +1,12 @@
 import os
 import tempfile
+
 import pytest
 import requests
 import requests_mock
+from PIL import Image
 
-from album_cards import make_qrcode, render_html, make_card, Album
+from album_cards import Album, make_card, make_qrcode, render_html
 
 
 @pytest.fixture
@@ -21,7 +23,12 @@ def album():
 
 def test_make_qrcode():
     with tempfile.TemporaryDirectory() as tmpdir:
-        filename = make_qrcode("http://google.com/", tmpdir=tmpdir)
+        filename = make_qrcode(
+            "http://google.com/",
+            embed_image=Image.open(open("test_data/cover.jpeg", "rb")),
+            color=(255, 255, 255),
+            tmpdir=tmpdir,
+        )
         assert os.path.getsize(filename) > 1
 
 
