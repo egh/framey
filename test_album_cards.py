@@ -1,3 +1,4 @@
+import importlib.resources
 import os
 import tempfile
 
@@ -12,7 +13,7 @@ from album_cards import Album, make_card, make_qrcode, render_html
 @pytest.fixture
 def album():
     return Album(
-        cover_url="http://example.com/cover.jpeg",
+        cover="http://example.com/cover.jpeg",
         artist="Daniel Case",
         title="Engigstciak",
         year="2000",
@@ -25,7 +26,9 @@ def test_make_qrcode():
     with tempfile.TemporaryDirectory() as tmpdir:
         filename = make_qrcode(
             "http://google.com/",
-            embed_image=Image.open(open("test_data/cover.jpeg", "rb")),
+            embed_image=Image.open(
+                importlib.resources.files("album_cards").joinpath("discogs.png")
+            ),
             color=(255, 255, 255),
             tmpdir=tmpdir,
         )
@@ -40,8 +43,12 @@ def test_render_html(album):
 
 def test_make_card(requests_mock, album):
     requests_mock.get(
-        "http://example.com/cover.jpeg", body=open("test_data/cover.jpeg", "rb")
+        "http://example.com/cover.jpeg",
+        body=open(
+            importlib.resources.files("album_cards").joinpath("sample-cover.jpeg"), "rb"
+        ),
     )
+
     with tempfile.TemporaryDirectory() as tmpdir:
         image = make_card(album)
         assert image.size == (600, 900)

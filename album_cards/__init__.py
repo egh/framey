@@ -3,7 +3,7 @@ import os
 import tempfile
 from dataclasses import dataclass
 
-from typing import Optional
+from typing import Optional, Union
 import chevron
 import discogs_client
 import qrcode
@@ -50,7 +50,7 @@ class Album:
     year: str
     spotify_url: Optional[str]
     discogs_url: Optional[str]
-    cover_url: str
+    cover: Union[str, Image.Image]
 
 
 def make_qrcode(url: str, embed_image: Image, color: tuple, tmpdir) -> str:
@@ -103,12 +103,15 @@ def render_html(tmpdir, album: Album) -> Image:
 
 def make_card(album: Album) -> Image:
     with tempfile.TemporaryDirectory() as tmpdir:
-        req = requests.get(album.cover_url, headers=HEADERS, stream=True)
-        req.raise_for_status()
-        img = Image.open(req.raw)
-        img = img.resize((600, 600))
+        if type(album.cover) == str:
+            req = requests.get(album.cover, headers=HEADERS, stream=True)
+            req.raise_for_status()
+            img = Image.open(req.raw)
+        else:
+            img = album.cover
+        img = img.resize((550, 550))
         out = Image.new(mode=img.mode, size=(600, 900), color="white")
-        out.paste(img)
+        out.paste(img, (25, 25))
         imgtext = render_html(tmpdir, album)
         out.paste(imgtext, (25, 625), mask=imgtext)
         return out
@@ -116,7 +119,7 @@ def make_card(album: Album) -> Image:
 
 def make_spotify_album(item) -> Album:
     return Album(
-        cover_url=item["images"][0]["url"],
+        cover=item["images"][0]["url"],
         artist=", ".join([artist["name"] for artist in item["artists"]]),
         title=item["name"],
         year=item["release_date"][0:4],
@@ -127,7 +130,7 @@ def make_spotify_album(item) -> Album:
 
 def make_discogs_album(release) -> Album:
     return Album(
-        cover_url=release.images[0]["uri"],
+        cover=release.images[0]["uri"],
         artist=release.artists_sort,
         title=release.title,
         year=release.year,
