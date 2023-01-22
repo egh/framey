@@ -1,11 +1,10 @@
 import importlib.resources
-
+import shutil
 from PIL import Image
 
-from album_cards import make_card, Album
+from album_cards import make_card, Album, make_html
 
-
-make_card(
+html_dir = make_html(
     Album(
         cover=Image.open(
             importlib.resources.files("album_cards").joinpath("sample-cover.jpeg")
@@ -16,4 +15,7 @@ make_card(
         spotify_url="https://spotify.com",
         discogs_url="https://discogs.com",
     )
-).save("sample.jpeg")
+)
+
+make_card(html_dir).save("sample.png")
+shutil.copytree(html_dir.name, "sample")

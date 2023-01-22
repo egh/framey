@@ -53,10 +53,10 @@ class Album:
     cover: Union[str, Image.Image]
 
 
-def make_qrcode(url: str, embed_image: Image, color: tuple, tmpdir) -> str:
+def make_qrcode(url: Optional[str], embed_image: Image, color: tuple, tmpdir) -> str:
     if url is None:
         return ""
-    qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
+    qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H, border=0)
     qr.add_data(url)
     img = qr.make_image(
         image_factory=StyledPilImage,
@@ -65,56 +65,63 @@ def make_qrcode(url: str, embed_image: Image, color: tuple, tmpdir) -> str:
     )
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False, dir=tmpdir) as out:
         img.save(out)
-        return out.name
+        return os.path.basename(out.name)
 
 
-def render_html(tmpdir, album: Album) -> Image:
-    hti = Html2Image()
-    hti.output_path = tmpdir
-    html = chevron.render(
-        HTML_TEMPLATE,
-        {
-            "year": album.year,
-            "title": album.title,
-            "artist": album.artist,
-            "spotify_qrcode": make_qrcode(
-                album.spotify_url,
-                embed_image=SPOTIFY_PNG,
-                color=(46, 189, 89),
-                tmpdir=tmpdir,
-            ),
-            "discogs_qrcode": make_qrcode(
-                album.discogs_url,
-                embed_image=DISCOGS_PNG,
-                color=(0, 0, 0),
-                tmpdir=tmpdir,
-            ),
-        },
-    )
-    with tempfile.NamedTemporaryFile(suffix=".png", delete=False, dir=tmpdir) as tmp:
+def download_cover(tmpdir, album) -> str:
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False, dir=tmpdir) as out:
+        if isinstance(album.cover, str):
+            resp = requests.get(album.cover, headers=HEADERS, stream=True)
+            resp.raise_for_status()
+            out.write(resp.content)
+        else:
+            album.cover.save(out)
+        return os.path.basename(out.name)
+
+
+def make_html(album: Album) -> tempfile.TemporaryDirectory():
+    tmpdir = tempfile.TemporaryDirectory()
+    with open(os.path.join(tmpdir.name, "cover.html"), "w") as f:
+        f.write(
+            chevron.render(
+                HTML_TEMPLATE,
+                {
+                    "cover": download_cover(tmpdir.name, album),
+                    "year": album.year,
+                    "title": album.title,
+                    "artist": album.artist,
+                    "spotify_qrcode": make_qrcode(
+                        album.spotify_url,
+                        embed_image=SPOTIFY_PNG,
+                        color=(46, 189, 89),
+                        tmpdir=tmpdir.name,
+                    ),
+                    "discogs_qrcode": make_qrcode(
+                        album.discogs_url,
+                        embed_image=DISCOGS_PNG,
+                        color=(0, 0, 0),
+                        tmpdir=tmpdir.name,
+                    ),
+                },
+            )
+        )
+    with open(os.path.join(tmpdir.name, "cover.css"), "w") as f:
+        f.write(CSS)
+    return tmpdir
+
+
+def make_card(html_dir: tempfile.TemporaryDirectory) -> Image:
+    with tempfile.NamedTemporaryFile(
+        suffix=".png", delete=False, dir=html_dir.name
+    ) as tmp:
+        hti = Html2Image()
+        hti.output_path = html_dir.name
         hti.screenshot(
-            html_str=html,
-            css_str=CSS,
+            url="file:///" + os.path.join(html_dir.name, "cover.html"),
             save_as=os.path.basename(tmp.name),
-            size=(550, 250),
+            size=(600, 900),
         )
         return Image.open(tmp.name)
-
-
-def make_card(album: Album) -> Image:
-    with tempfile.TemporaryDirectory() as tmpdir:
-        if type(album.cover) == str:
-            req = requests.get(album.cover, headers=HEADERS, stream=True)
-            req.raise_for_status()
-            img = Image.open(req.raw)
-        else:
-            img = album.cover
-        img = img.resize((550, 550))
-        out = Image.new(mode=img.mode, size=(600, 900), color="white")
-        out.paste(img, (25, 25))
-        imgtext = render_html(tmpdir, album)
-        out.paste(imgtext, (25, 625), mask=imgtext)
-        return out
 
 
 def make_spotify_album(item) -> Album:
@@ -165,11 +172,11 @@ def make_spotify_cards():
     for item in albums:
         album = make_spotify_album(item["album"])
         album.discogs_url = get_discogs_url(album)
-        make_card(album).save(f"{item['album']['id']}.jpeg")
+        make_card(make_html(album)).save(f"{item['album']['id']}.png")
 
 
 def make_discogs_cards():
     for item in DISCOGS_CLIENT.identity().collection_folders[0].releases:
         album = make_discogs_album(item.release)
         album.spotify_url = get_spotify_url(album)
-        make_card(album).save(f"{item.release.id}.jpeg")
+        make_card(make_html(album)).save(f"{item.release.id}.png")

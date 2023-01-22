@@ -1,6 +1,11 @@
 * {
   font-family: "Special Elite";
   font-size: 14pt;
+  background: white;
+}
+
+body {
+  margin: 25px;
 }
 
 img.qrcode {
@@ -8,18 +13,34 @@ img.qrcode {
   width: 150px;
 }
 
-img.discogs {
-  position: absolute;
-  bottom: 250px;
-  left: 0px;
-  top: 100px;
-  right: 150px;
+div.cover {
+  grid-column: 1 / 3;
+  grid-row: 1;
 }
 
-img.spotify {
-  position: absolute;
-  bottom: 250px;
-  left: 400px;
-  top: 100px;
-  right: 550px;
+img.cover {
+  height: 550px;
+  width: 550px;
+}
+
+div.info {
+  grid-column: 1 / 3;
+  grid-row: 3;
+}
+
+div.card {
+  display: grid;
+  grid-gap: 0px;
+  grid-template-columns: 150px 250px 150px;
+  grid-template-rows: 550px 25px 125px 150px;
+}
+
+div.spotify {
+  grid-column: 3;
+  grid-row: 4;
+}
+
+div.discogs {
+  grid-column: 1;
+  grid-row: 4;
 }

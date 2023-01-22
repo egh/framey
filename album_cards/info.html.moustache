@@ -1,15 +1,35 @@
-<div class="info">
-  <i>{{title}}</i>
-  {{#year}}
-  ({{year}})
-  {{/year}}
-  <br>
-  <br>
-  {{artist}}
-</div>
-{{#spotify_qrcode}}
-<img class="spotify qrcode" src={{spotify_qrcode}}>
-{{/spotify_qrcode}}
-{{#discogs_qrcode}}
-<img class="discogs qrcode" src={{discogs_qrcode}}>
-{{/discogs_qrcode}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+     <link rel="stylesheet" href="cover.css">
+</head>
+  
+  <body>
+    <div class="card">
+      <div class="cover">
+        <img class="cover" src="{{cover}}">
+      </div>
+      <div class="info">
+        <i>{{title}}</i>
+        {{#year}}
+        ({{year}})
+        {{/year}}
+        <br>
+        <br>
+        {{artist}}
+      </div>
+      <div class="spotify">
+        {{#spotify_qrcode}}
+        <img class="spotify qrcode" src="{{spotify_qrcode}}">
+        {{/spotify_qrcode}}
+      </div>
+      <div class="discogs">
+        {{#discogs_qrcode}}
+        <img class="discogs qrcode" src="{{discogs_qrcode}}">
+        {{/discogs_qrcode}}
+      </div>
+    </div>
+
+  </body>
+</html>
