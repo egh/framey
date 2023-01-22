@@ -161,4 +161,5 @@ cython_debug/
 
 .envrc
 *.jpeg
+*.png
 .dir-locals.el
