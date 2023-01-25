@@ -1,5 +1,7 @@
 import importlib.resources
+import os
 import shutil
+
 from PIL import Image
 
 from album_cards import Album, make_card, make_html
@@ -18,4 +20,6 @@ html_dir = make_html(
 )
 
 make_card(html_dir).save("sample.png")
+if os.path.isdir("sample"):
+    shutil.rmtree("sample")
 shutil.copytree(html_dir.name, "sample")
