@@ -16,7 +16,6 @@
         ({{year}})
         {{/year}}
         <br>
-        <br>
         {{artist}}
       </div>
       <div class="spotify">
