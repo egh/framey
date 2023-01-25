@@ -42,6 +42,8 @@ DISCOGS_PNG = Image.open(
 DISCOGS_CLIENT = discogs_client.Client(USER_AGENT, user_token=os.getenv("TOKEN"))
 SPOTIFY_CLIENT = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=SCOPE))
 
+HTI = Html2Image()
+
 
 @dataclass
 class Album:
@@ -114,9 +116,8 @@ def make_card(html_dir: tempfile.TemporaryDirectory) -> Image:
     with tempfile.NamedTemporaryFile(
         suffix=".png", delete=False, dir=html_dir.name
     ) as tmp:
-        hti = Html2Image()
-        hti.output_path = html_dir.name
-        hti.screenshot(
+        HTI.output_path = html_dir.name
+        HTI.screenshot(
             url="file:///" + os.path.join(html_dir.name, "cover.html"),
             save_as=os.path.basename(tmp.name),
             size=(600, 900),
