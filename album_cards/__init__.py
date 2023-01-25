@@ -148,16 +148,22 @@ def make_discogs_album(release) -> Album:
 
 
 def get_spotify_url(album):
-    results = SPOTIFY_CLIENT.search(
-        q=f"artist:{album.artist} album:{album.title}", type="album"
-    )["albums"]["items"]
-    if len(results) == 0:
-        return None
-    return results[0]["external_urls"]["spotify"]
+    # Titles from Discogs can be split by = for different languages.
+    # Try each language.
+    for title in album.title.split("="):
+        for artist in album.artist.split("&"):
+            results = SPOTIFY_CLIENT.search(q=f"{artist} {title}", type="album")[
+                "albums"
+            ]["items"]
+            if len(results) != 0:
+                return results[0]["external_urls"]["spotify"]
+    return None
 
 
 def get_discogs_url(album):
-    results = DISCOGS_CLIENT.search(album.title, artist=album.artist, type="master")
+    results = DISCOGS_CLIENT.search(f"{album.title} {album.artist}", type="master")
+    if len(results) == 0:
+        results = DISCOGS_CLIENT.search(f"{album.title} {album.artist}", type="release")
     if len(results) == 0:
         return None
     return f"https://www.discogs.com{results[0].url}"
