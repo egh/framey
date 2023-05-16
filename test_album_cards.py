@@ -7,7 +7,7 @@ import requests
 import requests_mock
 from PIL import Image
 
-from album_cards import Album, make_card, make_qrcode, render_html
+from album_cards import Album, make_card, make_qrcode, make_card, make_html
 
 
 @pytest.fixture
@@ -32,13 +32,7 @@ def test_make_qrcode():
             color=(255, 255, 255),
             tmpdir=tmpdir,
         )
-        assert os.path.getsize(filename) > 1
-
-
-def test_render_html(album):
-    with tempfile.TemporaryDirectory() as tmpdir:
-        image = render_html(tmpdir, album)
-        assert image.size == (550, 250)
+        assert os.path.getsize(os.path.join(tmpdir, filename)) > 1
 
 
 def test_make_card(requests_mock, album):
@@ -50,5 +44,5 @@ def test_make_card(requests_mock, album):
     )
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        image = make_card(album)
+        image = make_card(make_html(album))
         assert image.size == (600, 900)
