@@ -15,6 +15,7 @@ html2image = "*"
 chevron = "*"
 spotipy = "*"
 qrcode = "*"
+flask = "*"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"
