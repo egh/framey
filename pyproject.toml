@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "album-cards"
+name = "framey"
 version = "0.1.0"
 description = ""
 authors = ["Erik Hetzner <egh@e6h.org>"]
 readme = "README.md"
-packages = [{include = "album_cards"}]
+packages = [{include = "framey"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"

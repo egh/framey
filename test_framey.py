@@ -7,7 +7,7 @@ import requests
 import requests_mock
 from PIL import Image
 
-from album_cards import Album, make_card, make_qrcode, make_card, make_html
+from framey import Album, make_card, make_qrcode, make_card, make_html
 
 
 @pytest.fixture
@@ -27,7 +27,7 @@ def test_make_qrcode():
         filename = make_qrcode(
             "http://google.com/",
             embed_image=Image.open(
-                importlib.resources.files("album_cards").joinpath("discogs.png")
+                importlib.resources.files("framey").joinpath("discogs.png")
             ),
             color=(255, 255, 255),
             tmpdir=tmpdir,
@@ -39,7 +39,7 @@ def test_make_card(requests_mock, album):
     requests_mock.get(
         "http://example.com/cover.jpeg",
         body=open(
-            importlib.resources.files("album_cards").joinpath("sample-cover.jpeg"), "rb"
+            importlib.resources.files("framey").joinpath("sample-cover.jpeg"), "rb"
         ),
     )
 

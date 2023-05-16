@@ -17,26 +17,26 @@ from qrcode.image.styles.colormasks import SolidFillColorMask
 from spotipy.oauth2 import SpotifyOAuth
 
 SCOPE = "user-library-read"
-USER_AGENT = "album_cards/0.1"
+USER_AGENT = "framey/0.1"
 HEADERS = {
     "User-Agent": USER_AGENT,
 }
 
 HTML_TEMPLATE = (
-    importlib.resources.files("album_cards")
+    importlib.resources.files("framey")
     .joinpath("info.html.moustache")
     .read_text(encoding="utf-8")
 )
 CSS = (
-    importlib.resources.files("album_cards")
+    importlib.resources.files("framey")
     .joinpath("info.css")
     .read_text(encoding="utf-8")
 )
 SPOTIFY_PNG = Image.open(
-    importlib.resources.files("album_cards").joinpath("spotify.png")
+    importlib.resources.files("framey").joinpath("spotify.png")
 )
 DISCOGS_PNG = Image.open(
-    importlib.resources.files("album_cards").joinpath("discogs.png")
+    importlib.resources.files("framey").joinpath("discogs.png")
 )
 
 DISCOGS_CLIENT = discogs_client.Client(USER_AGENT, user_token=os.getenv("TOKEN"))

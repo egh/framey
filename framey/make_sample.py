@@ -4,12 +4,12 @@ import shutil
 
 from PIL import Image
 
-from album_cards import Album, make_card, make_html
+from framey import Album, make_card, make_html
 
 html_dir = make_html(
     Album(
         cover=Image.open(
-            importlib.resources.files("album_cards").joinpath("sample-cover.jpeg")
+            importlib.resources.files("framey").joinpath("sample-cover.jpeg")
         ),
         artist="Aliquam erat volutpat.  Nunc eleifend leo vitae magna.  In id erat non orci commodo lobortis.  Proin neque massa, cursus ut, gravida ut, lobortis eget, lacus.  Sed diam.  Praesent fermentum tempor tellus.  Nullam tempus.",
         title="Mauris ac felis vel velit tristique imperdiet.  Donec at pede.  Etiam vel neque nec dui dignissim bibendum.",
