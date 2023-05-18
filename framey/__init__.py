@@ -16,7 +16,7 @@ from qrcode.image.styledpil import StyledPilImage
 from qrcode.image.styles.colormasks import SolidFillColorMask
 from spotipy.oauth2 import SpotifyOAuth
 
-SCOPE = "user-library-read"
+SCOPE = "user-library-read,user-read-currently-playing,user-read-recently-played"
 USER_AGENT = "framey/0.1"
 HEADERS = {
     "User-Agent": USER_AGENT,
@@ -28,16 +28,10 @@ HTML_TEMPLATE = (
     .read_text(encoding="utf-8")
 )
 CSS = (
-    importlib.resources.files("framey")
-    .joinpath("info.css")
-    .read_text(encoding="utf-8")
+    importlib.resources.files("framey").joinpath("info.css").read_text(encoding="utf-8")
 )
-SPOTIFY_PNG = Image.open(
-    importlib.resources.files("framey").joinpath("spotify.png")
-)
-DISCOGS_PNG = Image.open(
-    importlib.resources.files("framey").joinpath("discogs.png")
-)
+SPOTIFY_PNG = Image.open(importlib.resources.files("framey").joinpath("spotify.png"))
+DISCOGS_PNG = Image.open(importlib.resources.files("framey").joinpath("discogs.png"))
 
 DISCOGS_CLIENT = discogs_client.Client(USER_AGENT, user_token=os.getenv("TOKEN"))
 SPOTIFY_CLIENT = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=SCOPE))
@@ -187,3 +181,17 @@ def make_discogs_cards():
         album = make_discogs_album(item.release)
         album.spotify_url = get_spotify_url(album)
         make_card(make_html(album)).save(f"{item.release.id}.png")
+
+
+def make_now_playing_card():
+    current_playing = SPOTIFY_CLIENT.current_user_playing_track()
+    if current_playing is not None:
+        last_track = current_playing["item"]
+    else:
+        last_track = SPOTIFY_CLIENT.current_user_recently_played(limit=1)["items"][0][
+            "track"
+        ]
+    if last_track is not None:
+        album = make_spotify_album(last_track["album"])
+        album.discogs_url = get_discogs_url(album)
+        return make_card(make_html(album))
