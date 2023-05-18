@@ -16,6 +16,7 @@ chevron = "*"
 spotipy = "*"
 qrcode = "*"
 flask = "*"
+gunicorn = "*"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"
