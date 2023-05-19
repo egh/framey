@@ -17,6 +17,7 @@ spotipy = "*"
 qrcode = "*"
 flask = "*"
 gunicorn = "*"
+hitherdither = {git = "https://github.com/hbldh/hitherdither.git", branch = "master"}
 
 [tool.poetry.group.dev.dependencies]
 black = "*"

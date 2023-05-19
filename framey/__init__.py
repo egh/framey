@@ -15,6 +15,8 @@ from PIL import Image
 from qrcode.image.styledpil import StyledPilImage
 from qrcode.image.styles.colormasks import SolidFillColorMask
 from spotipy.oauth2 import SpotifyOAuth
+import hitherdither
+
 
 SCOPE = "user-library-read,user-read-currently-playing,user-read-recently-played"
 USER_AGENT = "framey/0.1"
@@ -114,7 +116,7 @@ def make_card(html_dir: tempfile.TemporaryDirectory) -> Image:
         HTI.screenshot(
             url="file:///" + os.path.join(html_dir.name, "cover.html"),
             save_as=os.path.basename(tmp.name),
-            size=(600, 900),
+            size=(800, 480),
         )
         return Image.open(tmp.name)
 
@@ -195,3 +197,26 @@ def make_now_playing_card():
         album = make_spotify_album(last_track["album"])
         album.discogs_url = get_discogs_url(album)
         return make_card(make_html(album))
+
+
+def dither_image(image):
+    # Need to save and reopen or hitherdither errors
+    tmpfile = tempfile.NamedTemporaryFile(suffix=".jpg")
+    tmpfile.seek(0)
+    image.convert("RGB").save(tmpfile)
+    image = Image.open(tmpfile)
+    palette = hitherdither.palette.Palette(
+        [
+            0x000000,  # black  #000000
+            0xFFFFFF,  # white  #FFFFFF
+            0x00FF00,  # green  #00FF00
+            0x0000FF,  # blue   #0000FF
+            0x00FF00,  # red    #FF0000
+            0xFFFF00,  # yellow #FFFF00
+            0xFF8000,  # orange #FF8000
+            # 0xDCB4C8 # taupe? #DCB4C8
+        ]
+    )
+    return hitherdither.ordered.bayer.bayer_dithering(
+        image, palette, [256 / 4, 256 / 4, 256 / 4], order=8
+    ).convert("RGB")
