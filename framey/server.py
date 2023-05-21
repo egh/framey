@@ -8,6 +8,6 @@ app = Flask(__name__)
 @app.route("/playing.jpeg")
 def now_playing():
     tmpfile = tempfile.TemporaryFile(suffix=".jpeg")
-    dither_image(make_now_playing_card()).save(tmpfile, format="JPEG")
+    make_now_playing_card().convert("RGB").save(tmpfile, format="JPEG")
     tmpfile.seek(0)
     return send_file(tmpfile, mimetype="image/jpeg")

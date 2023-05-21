@@ -74,6 +74,7 @@ def download_cover(tmpdir, album) -> str:
             out.write(resp.content)
         else:
             album.cover.save(out)
+        dither_image_path(out.name)
         return os.path.basename(out.name)
 
 
@@ -91,7 +92,7 @@ def make_html(album: Album) -> tempfile.TemporaryDirectory():
                     "spotify_qrcode": make_qrcode(
                         album.spotify_url,
                         embed_image=SPOTIFY_PNG,
-                        color=(46, 189, 89),
+                        color=(0, 255, 0),
                         tmpdir=tmpdir.name,
                     ),
                     "discogs_qrcode": make_qrcode(
@@ -199,12 +200,21 @@ def make_now_playing_card():
         return make_card(make_html(album))
 
 
+def dither_image_path(path):
+    image = Image.open(path)
+    dither_image_int(image).save(path)
+
+
 def dither_image(image):
     # Need to save and reopen or hitherdither errors
     tmpfile = tempfile.NamedTemporaryFile(suffix=".jpg")
     tmpfile.seek(0)
     image.convert("RGB").save(tmpfile)
     image = Image.open(tmpfile)
+    return dither_image_int(image)
+
+
+def dither_image_int(image):
     palette = hitherdither.palette.Palette(
         [
             0x000000,  # black  #000000
