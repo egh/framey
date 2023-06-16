@@ -24,16 +24,14 @@ HEADERS = {
     "User-Agent": USER_AGENT,
 }
 
-HTML_TEMPLATE = (
-    importlib.resources.files("framey")
-    .joinpath("info.html.moustache")
-    .read_text(encoding="utf-8")
+HTML_TEMPLATE = importlib.resources.read_text(
+    "framey", "info.html.moustache", encoding="utf-8"
 )
-CSS = (
-    importlib.resources.files("framey").joinpath("info.css").read_text(encoding="utf-8")
-)
-SPOTIFY_PNG = Image.open(importlib.resources.files("framey").joinpath("spotify.png"))
-DISCOGS_PNG = Image.open(importlib.resources.files("framey").joinpath("discogs.png"))
+CSS = importlib.resources.read_text("framey", "info.css", encoding="utf-8")
+with importlib.resources.path("framey", "spotify.png") as file:
+    SPOTIFY_PNG = Image.open(file)
+with importlib.resources.path("framey", "discogs.png") as file:
+    DISCOGS_PNG = Image.open(file)
 
 DISCOGS_CLIENT = discogs_client.Client(USER_AGENT, user_token=os.getenv("TOKEN"))
 SPOTIFY_CLIENT = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=SCOPE))
