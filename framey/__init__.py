@@ -14,11 +14,9 @@ from html2image import Html2Image
 from PIL import Image
 from qrcode.image.styledpil import StyledPilImage
 from qrcode.image.styles.colormasks import SolidFillColorMask
-from spotipy.oauth2 import SpotifyOAuth
 import hitherdither
 
 
-SCOPE = "user-library-read,user-read-currently-playing,user-read-recently-played"
 USER_AGENT = "framey/0.1"
 HEADERS = {
     "User-Agent": USER_AGENT,
@@ -34,7 +32,6 @@ with importlib.resources.path("framey", "discogs.png") as file:
     DISCOGS_PNG = Image.open(file)
 
 DISCOGS_CLIENT = discogs_client.Client(USER_AGENT, user_token=os.getenv("TOKEN"))
-SPOTIFY_CLIENT = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=SCOPE))
 
 HTI = Html2Image()
 
@@ -142,14 +139,14 @@ def make_discogs_album(release) -> Album:
     )
 
 
-def get_spotify_url(album):
+def get_spotify_url(client, album):
     # Titles from Discogs can be split by = for different languages.
     # Try each language.
     for title in album.title.split("="):
         for artist in album.artist.split("&"):
-            results = SPOTIFY_CLIENT.search(q=f"{artist} {title}", type="album")[
-                "albums"
-            ]["items"]
+            results = client.search(q=f"{artist} {title}", type="album")["albums"][
+                "items"
+            ]
             if len(results) != 0:
                 return results[0]["external_urls"]["spotify"]
     return None
@@ -164,11 +161,11 @@ def get_discogs_url(album):
     return f"https://www.discogs.com{results[0].url}"
 
 
-def make_spotify_cards():
-    results = SPOTIFY_CLIENT.current_user_saved_albums()
+def make_spotify_cards(spotify_client):
+    results = spotify_client.current_user_saved_albums()
     albums = results["items"]
     while results["next"]:
-        results = SPOTIFY_CLIENT.next(results)
+        results = spotify_client.next(results)
         albums.extend(results["items"])
 
     for item in albums:
@@ -177,19 +174,19 @@ def make_spotify_cards():
         make_card(make_html(album)).save(f"{item['album']['id']}.png")
 
 
-def make_discogs_cards():
+def make_discogs_cards(spotify_client):
     for item in DISCOGS_CLIENT.identity().collection_folders[0].releases:
         album = make_discogs_album(item.release)
-        album.spotify_url = get_spotify_url(album)
+        album.spotify_url = get_spotify_url(spotify_client, album)
         make_card(make_html(album)).save(f"{item.release.id}.png")
 
 
-def make_now_playing_card():
-    current_playing = SPOTIFY_CLIENT.current_user_playing_track()
+def make_now_playing_card(spotify_client):
+    current_playing = spotify_client.current_user_playing_track()
     if current_playing is not None:
         last_track = current_playing["item"]
     else:
-        last_track = SPOTIFY_CLIENT.current_user_recently_played(limit=1)["items"][0][
+        last_track = spotify_client.current_user_recently_played(limit=1)["items"][0][
             "track"
         ]
     if last_track is not None:
