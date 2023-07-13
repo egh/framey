@@ -3,7 +3,7 @@ import os
 import tempfile
 from dataclasses import dataclass
 
-from typing import Optional, Union
+from typing import Optional, Union, List
 import chevron
 import discogs_client
 import qrcode
@@ -44,6 +44,7 @@ class Album:
     spotify_url: Optional[str]
     discogs_url: Optional[str]
     cover: Union[str, Image.Image]
+    credits: Optional[str]
 
 
 def make_qrcode(url: Optional[str], embed_image: Image, color: tuple, tmpdir) -> str:
@@ -84,6 +85,7 @@ def make_html(album: Album) -> tempfile.TemporaryDirectory():
                     "year": album.year,
                     "title": album.title,
                     "artist": album.artist,
+                    "credits": album.credits,
                     "spotify_qrcode": make_qrcode(
                         album.spotify_url,
                         embed_image=SPOTIFY_PNG,
@@ -125,6 +127,7 @@ def make_spotify_album(item) -> Album:
         year=item["release_date"][0:4],
         spotify_url=item["external_urls"]["spotify"],
         discogs_url=None,
+        credits=None,
     )
 
 
@@ -136,6 +139,7 @@ def make_discogs_album(release) -> Album:
         year=release.year,
         discogs_url=release.url,
         spotify_url=None,
+        credits=release.credits,
     )
 
 
@@ -152,13 +156,20 @@ def get_spotify_url(client, album):
     return None
 
 
-def get_discogs_url(album):
+def discogs_enhance(album):
     results = DISCOGS_CLIENT.search(f"{album.title} {album.artist}", type="master")
-    if len(results) == 0:
+    if len(results) > 0:
+        credits = results[0].main_release.credits
+        url = results[0].url
+    else:
         results = DISCOGS_CLIENT.search(f"{album.title} {album.artist}", type="release")
-    if len(results) == 0:
-        return None
-    return f"https://www.discogs.com{results[0].url}"
+        if len(results) > 0:
+            credits = results[0].credits
+            url = results[0].url
+        else:
+            return
+    album.credits = credits
+    album.discogs_url = url
 
 
 def make_spotify_cards(spotify_client):
@@ -191,7 +202,7 @@ def make_now_playing_card(spotify_client):
         ]
     if last_track is not None:
         album = make_spotify_album(last_track["album"])
-        album.discogs_url = get_discogs_url(album)
+        discogs_enhance(album)
         return make_card(make_html(album))
 
 

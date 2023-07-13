@@ -17,6 +17,13 @@
         {{/year}}
         <br>
         {{artist}}
+        <br>
+        <br>
+        <span class="credits">
+          {{#credits}}
+            <span class="name">{{name}}</span> ({{role}});
+          {{/credits}}
+        </span>
       </div>
       <div class="spotify">
         {{#spotify_qrcode}}
