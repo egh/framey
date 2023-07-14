@@ -18,8 +18,8 @@ body {
 }
 
 img.qrcode {
-  height: 100px;
-  width: 100px;
+  height: 145px;
+  width: 145px;
 }
 
 div.cover {
@@ -42,19 +42,19 @@ div.card {
   display: grid;
   grid-gap: 0px; 
   grid-template-columns: 480px 160px 160px;
-  grid-template-rows: 360px 120px;
+  grid-template-rows: 315px 155px;
 }
 
 div.spotify {
   grid-column: 2;
   grid-row: 2;
-  padding: 10px 20px 10px 40px;
+  padding: 10px 5px 10px 10px;
   margin: 0px;
 }
 
 div.discogs {
   grid-column: 3;
   grid-row: 2;
-  padding: 10px 40px 10px 20px;
+  padding: 10px 10px 10px 5px;
   margin: 0px;
 }
