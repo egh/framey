@@ -164,3 +164,5 @@ cython_debug/
 *.png
 .dir-locals.el
 sample
+
+client/WIFI_CONFIG.py
