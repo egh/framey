@@ -131,31 +131,6 @@ def make_spotify_album(item) -> Album:
     )
 
 
-def make_discogs_album(release) -> Album:
-    return Album(
-        cover=release.images[0]["uri"],
-        artist=release.artists_sort,
-        title=release.title,
-        year=release.year,
-        discogs_url=release.url,
-        spotify_url=None,
-        credits=release.credits,
-    )
-
-
-def get_spotify_url(client, album):
-    # Titles from Discogs can be split by = for different languages.
-    # Try each language.
-    for title in album.title.split("="):
-        for artist in album.artist.split("&"):
-            results = client.search(q=f"{artist} {title}", type="album")["albums"][
-                "items"
-            ]
-            if len(results) != 0:
-                return results[0]["external_urls"]["spotify"]
-    return None
-
-
 def discogs_enhance(album):
     results = DISCOGS_CLIENT.search(f"{album.title} {album.artist}", type="master")
     if len(results) > 0:
@@ -170,26 +145,6 @@ def discogs_enhance(album):
             return
     album.credits = credits
     album.discogs_url = url
-
-
-def make_spotify_cards(spotify_client):
-    results = spotify_client.current_user_saved_albums()
-    albums = results["items"]
-    while results["next"]:
-        results = spotify_client.next(results)
-        albums.extend(results["items"])
-
-    for item in albums:
-        album = make_spotify_album(item["album"])
-        album.discogs_url = get_discogs_url(album)
-        make_card(make_html(album)).save(f"{item['album']['id']}.png")
-
-
-def make_discogs_cards(spotify_client):
-    for item in DISCOGS_CLIENT.identity().collection_folders[0].releases:
-        album = make_discogs_album(item.release)
-        album.spotify_url = get_spotify_url(spotify_client, album)
-        make_card(make_html(album)).save(f"{item.release.id}.png")
 
 
 def make_now_playing_card(spotify_client):
