@@ -21,7 +21,7 @@ USER_AGENT = "framey/0.1"
 HEADERS = {
     "User-Agent": USER_AGENT,
 }
-
+HTML_FILE = "framey.html"
 HTML_TEMPLATE = importlib.resources.read_text(
     "framey", "info.html.moustache", encoding="utf-8"
 )
@@ -76,7 +76,7 @@ def download_cover(tmpdir, album) -> str:
 
 def make_html(album: Album) -> tempfile.TemporaryDirectory():
     tmpdir = tempfile.TemporaryDirectory()
-    with open(os.path.join(tmpdir.name, "cover.html"), "w") as f:
+    with open(os.path.join(tmpdir.name, HTML_FILE), "w") as f:
         f.write(
             chevron.render(
                 HTML_TEMPLATE,
@@ -112,7 +112,7 @@ def make_card(html_dir: tempfile.TemporaryDirectory) -> Image:
     ) as tmp:
         HTI.output_path = html_dir.name
         HTI.screenshot(
-            url="file:///" + os.path.join(html_dir.name, "cover.html"),
+            url="file:///" + os.path.join(html_dir.name, HTML_FILE),
             save_as=os.path.basename(tmp.name),
             size=(800, 480),
         )
