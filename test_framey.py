@@ -7,7 +7,7 @@ import requests
 import requests_mock
 from PIL import Image
 
-from framey import Album, make_card, make_qrcode, make_card, make_html
+from framey import Album, make_image, make_qrcode, make_html
 
 
 @pytest.fixture
@@ -35,7 +35,7 @@ def test_make_qrcode():
             assert os.path.getsize(os.path.join(tmpdir, filename)) > 1
 
 
-def test_make_card(requests_mock, album):
+def test_make_image(requests_mock, album):
     with importlib.resources.path("framey", "sample-cover.jpeg") as path:
         requests_mock.get(
             "http://example.com/cover.jpeg",
@@ -43,5 +43,5 @@ def test_make_card(requests_mock, album):
         )
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        image = make_card(make_html(album))
+        image = make_image(make_html(album))
         assert image.size == (800, 480)

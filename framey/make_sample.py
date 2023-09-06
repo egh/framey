@@ -4,7 +4,7 @@ import shutil
 
 from PIL import Image
 
-from framey import Album, make_card, make_html
+from framey import Album, make_image, make_html
 
 html_dir = make_html(
     Album(
@@ -19,7 +19,7 @@ html_dir = make_html(
     )
 )
 
-make_card(html_dir).save("sample.png")
+make_image(html_dir).save("sample.png")
 if os.path.isdir("sample"):
     shutil.rmtree("sample")
 shutil.copytree(html_dir.name, "sample")

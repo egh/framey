@@ -106,7 +106,7 @@ def make_html(album: Album) -> tempfile.TemporaryDirectory():
     return tmpdir
 
 
-def make_card(html_dir: tempfile.TemporaryDirectory) -> Image:
+def make_image(html_dir: tempfile.TemporaryDirectory) -> Image:
     with tempfile.NamedTemporaryFile(
         suffix=".png", delete=False, dir=html_dir.name
     ) as tmp:
@@ -158,7 +158,7 @@ def make_now_playing_card(spotify_client):
     if last_track is not None:
         album = make_spotify_album(last_track["album"])
         discogs_enhance(album)
-        return make_card(make_html(album))
+        return make_image(make_html(album))
 
 
 def dither_image_path(path):
