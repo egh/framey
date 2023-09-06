@@ -19,30 +19,29 @@ def album():
         year="2000",
         spotify_url="http://example.org",
         discogs_url="http://example.com",
+        credits="By someone",
     )
 
 
 def test_make_qrcode():
     with tempfile.TemporaryDirectory() as tmpdir:
-        filename = make_qrcode(
-            "http://google.com/",
-            embed_image=Image.open(
-                importlib.resources.files("framey").joinpath("discogs.png")
-            ),
-            color=(255, 255, 255),
-            tmpdir=tmpdir,
-        )
-        assert os.path.getsize(os.path.join(tmpdir, filename)) > 1
+        with importlib.resources.path("framey", "discogs.png") as image_path:
+            filename = make_qrcode(
+                "http://google.com/",
+                embed_image=Image.open(image_path),
+                color=(255, 255, 255),
+                tmpdir=tmpdir,
+            )
+            assert os.path.getsize(os.path.join(tmpdir, filename)) > 1
 
 
 def test_make_card(requests_mock, album):
-    requests_mock.get(
-        "http://example.com/cover.jpeg",
-        body=open(
-            importlib.resources.files("framey").joinpath("sample-cover.jpeg"), "rb"
-        ),
-    )
+    with importlib.resources.path("framey", "sample-cover.jpeg") as path:
+        requests_mock.get(
+            "http://example.com/cover.jpeg",
+            body=open(path, "rb"),
+        )
 
     with tempfile.TemporaryDirectory() as tmpdir:
         image = make_card(make_html(album))
-        assert image.size == (600, 900)
+        assert image.size == (800, 480)
