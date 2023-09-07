@@ -7,7 +7,7 @@ import requests
 import requests_mock
 from PIL import Image
 
-from framey import make_image, make_qrcode
+from framey import render_image, make_qrcode
 from framey.spotify import Album, make_html
 
 
@@ -36,7 +36,7 @@ def test_make_qrcode():
             assert os.path.getsize(os.path.join(tmpdir, filename)) > 1
 
 
-def test_make_image(requests_mock, album):
+def test_render_image(requests_mock, album):
     with importlib.resources.path("framey", "sample-cover.jpeg") as path:
         requests_mock.get(
             "http://example.com/cover.jpeg",
@@ -44,5 +44,5 @@ def test_make_image(requests_mock, album):
         )
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        image = make_image(make_html(album))
+        image = render_image(make_html(album))
         assert image.size == (800, 480)

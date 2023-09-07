@@ -14,7 +14,7 @@ from framey import (
     HEADERS,
     USER_AGENT,
     dither_image_path,
-    make_image,
+    render_image,
     make_qrcode,
 )
 
@@ -80,7 +80,7 @@ def make_now_playing_image(spotify_client):
     if last_track is not None:
         album = make_spotify_album(last_track["album"])
         discogs_enhance(album)
-        return make_image(make_html(album))
+        return render_image(make_html(album))
 
 
 def download_cover(tmpdir, album) -> str:
