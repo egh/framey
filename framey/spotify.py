@@ -18,9 +18,9 @@ from framey import (
 )
 
 HTML_TEMPLATE = importlib.resources.read_text(
-    "framey", "info.html.moustache", encoding="utf-8"
+    "framey", "spotify_now_playing.html.moustache", encoding="utf-8"
 )
-CSS = importlib.resources.read_text("framey", "info.css", encoding="utf-8")
+CSS = importlib.resources.read_text("framey", "spotify_now_playing.css", encoding="utf-8")
 with importlib.resources.path("framey", "spotify.png") as file:
     SPOTIFY_PNG = Image.open(file)
 with importlib.resources.path("framey", "discogs.png") as file:
