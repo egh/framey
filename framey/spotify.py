@@ -7,7 +7,6 @@ from typing import List, Optional, Union
 import chevron
 import discogs_client
 import requests
-import spotipy
 from PIL import Image
 
 from framey import (
