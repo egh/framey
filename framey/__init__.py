@@ -14,7 +14,6 @@ USER_AGENT = "framey/0.1"
 HEADERS = {
     "User-Agent": USER_AGENT,
 }
-HTML_FILE = "framey.html"
 HTI = Html2Image()
 
 
@@ -45,7 +44,7 @@ def make_image(html_dir: tempfile.TemporaryDirectory) -> Image:
     ) as tmp:
         HTI.output_path = html_dir.name
         HTI.screenshot(
-            url="file:///" + os.path.join(html_dir.name, HTML_FILE),
+            url="file:///" + os.path.join(html_dir.name, "index.html"),
             save_as=os.path.basename(tmp.name),
             size=(800, 480),
         )

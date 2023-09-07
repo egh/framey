@@ -12,7 +12,6 @@ from PIL import Image
 
 from framey import (
     HEADERS,
-    HTML_FILE,
     USER_AGENT,
     dither_image_path,
     make_image,
@@ -98,7 +97,7 @@ def download_cover(tmpdir, album) -> str:
 
 def make_html(album: Album) -> tempfile.TemporaryDirectory():
     tmpdir = tempfile.TemporaryDirectory()
-    with open(os.path.join(tmpdir.name, HTML_FILE), "w") as f:
+    with open(os.path.join(tmpdir.name, "index.html"), "w") as f:
         f.write(
             chevron.render(
                 HTML_TEMPLATE,
