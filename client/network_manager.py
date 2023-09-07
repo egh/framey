@@ -7,7 +7,14 @@ import uasyncio
 class NetworkManager:
     _ifname = ("Client", "Access Point")
 
-    def __init__(self, country="GB", client_timeout=60, access_point_timeout=5, status_handler=None, error_handler=None):
+    def __init__(
+        self,
+        country="GB",
+        client_timeout=60,
+        access_point_timeout=5,
+        status_handler=None,
+        error_handler=None,
+    ):
         rp2.country(country)
         self._ap_if = network.WLAN(network.AP_IF)
         self._sta_if = network.WLAN(network.STA_IF)
@@ -42,7 +49,7 @@ class NetworkManager:
             return self._sta_if.ifconfig()[0]
         if self._ap_if.isconnected():
             return self._ap_if.ifconfig()[0]
-        return '0.0.0.0'
+        return "0.0.0.0"
 
     def disconnect(self):
         if self._sta_if.isconnected():
@@ -74,7 +81,7 @@ class NetworkManager:
         self._ap_if.active(False)
 
         self._sta_if.active(True)
-        self._sta_if.config(pm=0xa11140)
+        self._sta_if.config(pm=0xA11140)
         self._sta_if.connect(ssid, psk)
 
         try:
@@ -99,7 +106,9 @@ class NetworkManager:
         self._ap_if.active(True)
 
         try:
-            await uasyncio.wait_for(self.wait(network.AP_IF), self._access_point_timeout)
+            await uasyncio.wait_for(
+                self.wait(network.AP_IF), self._access_point_timeout
+            )
             self._handle_status(network.AP_IF, True)
 
         except uasyncio.TimeoutError:

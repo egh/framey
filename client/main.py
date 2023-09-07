@@ -1,18 +1,19 @@
 import gc
-import uos
-import machine
-import jpegdec
-import uasyncio
-import sdcard
-import WIFI_CONFIG
-import urequests
-from network_manager import NetworkManager
 
+import inky_frame
+import jpegdec
+import machine
+import sdcard
+import uasyncio
+import uos
+import urequests
+import WIFI_CONFIG
+from network_manager import NetworkManager
 
 # from picographics import PicoGraphics, DISPLAY_INKY_FRAME as DISPLAY      # 5.7"
 # from picographics import PicoGraphics, DISPLAY_INKY_FRAME_4 as DISPLAY  # 4.0"
-from picographics import PicoGraphics, DISPLAY_INKY_FRAME_7 as DISPLAY  # 7.3"
-import inky_frame
+from picographics import DISPLAY_INKY_FRAME_7 as DISPLAY  # 7.3"
+from picographics import PicoGraphics
 
 FILENAME = "/sd/playing.jpeg"
 FILENAME_ETAG = FILENAME + "etag"

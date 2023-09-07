@@ -4,7 +4,7 @@ import shutil
 
 from PIL import Image
 
-from framey import Album, make_image, make_html
+from framey import Album, make_html, make_image
 
 html_dir = make_html(
     Album(
