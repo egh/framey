@@ -1,53 +1,27 @@
-import importlib.resources
 import os
 import tempfile
-from dataclasses import dataclass
+from typing import Optional
 
-from typing import Optional, Union, List
-import chevron
-import discogs_client
+import hitherdither
 import qrcode
 import qrcode.image.svg
-import requests
-import spotipy
 from html2image import Html2Image
 from PIL import Image
 from qrcode.image.styledpil import StyledPilImage
 from qrcode.image.styles.colormasks import SolidFillColorMask
-import hitherdither
-
 
 USER_AGENT = "framey/0.1"
 HEADERS = {
     "User-Agent": USER_AGENT,
 }
 HTML_FILE = "framey.html"
-HTML_TEMPLATE = importlib.resources.read_text(
-    "framey", "info.html.moustache", encoding="utf-8"
-)
-CSS = importlib.resources.read_text("framey", "info.css", encoding="utf-8")
-with importlib.resources.path("framey", "spotify.png") as file:
-    SPOTIFY_PNG = Image.open(file)
-with importlib.resources.path("framey", "discogs.png") as file:
-    DISCOGS_PNG = Image.open(file)
-
-DISCOGS_CLIENT = discogs_client.Client(USER_AGENT, user_token=os.getenv("TOKEN"))
-
 HTI = Html2Image()
 
 
-@dataclass
-class Album:
-    title: str
-    artist: str
-    year: str
-    spotify_url: Optional[str]
-    discogs_url: Optional[str]
-    cover: Union[str, Image.Image]
-    credits: Optional[str]
-
-
 def make_qrcode(url: Optional[str], embed_image: Image, color: tuple, tmpdir) -> str:
+    """Build a QRcode for a url with an optionally embedded image in
+    the center and a given color. Will write image to the tmpdir and
+    return the image file name."""
     if url is None:
         return ""
     qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H, border=0)
@@ -62,51 +36,10 @@ def make_qrcode(url: Optional[str], embed_image: Image, color: tuple, tmpdir) ->
         return os.path.basename(out.name)
 
 
-def download_cover(tmpdir, album) -> str:
-    with tempfile.NamedTemporaryFile(suffix=".png", delete=False, dir=tmpdir) as out:
-        if isinstance(album.cover, str):
-            resp = requests.get(album.cover, headers=HEADERS, stream=True)
-            resp.raise_for_status()
-            out.write(resp.content)
-        else:
-            album.cover.save(out)
-        dither_image_path(out.name)
-        return os.path.basename(out.name)
-
-
-def make_html(album: Album) -> tempfile.TemporaryDirectory():
-    tmpdir = tempfile.TemporaryDirectory()
-    with open(os.path.join(tmpdir.name, HTML_FILE), "w") as f:
-        f.write(
-            chevron.render(
-                HTML_TEMPLATE,
-                {
-                    "cover": download_cover(tmpdir.name, album),
-                    "year": album.year,
-                    "title": album.title,
-                    "artist": album.artist,
-                    "credits": album.credits,
-                    "spotify_qrcode": make_qrcode(
-                        album.spotify_url,
-                        embed_image=SPOTIFY_PNG,
-                        color=(0, 255, 0),
-                        tmpdir=tmpdir.name,
-                    ),
-                    "discogs_qrcode": make_qrcode(
-                        album.discogs_url,
-                        embed_image=DISCOGS_PNG,
-                        color=(0, 0, 0),
-                        tmpdir=tmpdir.name,
-                    ),
-                },
-            )
-        )
-    with open(os.path.join(tmpdir.name, "cover.css"), "w") as f:
-        f.write(CSS)
-    return tmpdir
-
-
 def make_image(html_dir: tempfile.TemporaryDirectory) -> Image:
+    """Build a jpeg image from html. File will be dithered to work
+    from inky frame colors, sized to 800x480. Directory should include
+    a file named framey.html."""
     with tempfile.NamedTemporaryFile(
         suffix=".png", delete=False, dir=html_dir.name
     ) as tmp:
@@ -119,54 +52,14 @@ def make_image(html_dir: tempfile.TemporaryDirectory) -> Image:
         return Image.open(tmp.name)
 
 
-def make_spotify_album(item) -> Album:
-    return Album(
-        cover=item["images"][0]["url"],
-        artist=", ".join([artist["name"] for artist in item["artists"]]),
-        title=item["name"],
-        year=item["release_date"][0:4],
-        spotify_url=item["external_urls"]["spotify"],
-        discogs_url=None,
-        credits=None,
-    )
-
-
-def discogs_enhance(album):
-    results = DISCOGS_CLIENT.search(f"{album.title} {album.artist}", type="master")
-    if len(results) > 0:
-        credits = results[0].main_release.credits
-        url = results[0].url
-    else:
-        results = DISCOGS_CLIENT.search(f"{album.title} {album.artist}", type="release")
-        if len(results) > 0:
-            credits = results[0].credits
-            url = results[0].url
-        else:
-            return
-    album.credits = credits
-    album.discogs_url = url
-
-
-def make_now_playing_card(spotify_client):
-    current_playing = spotify_client.current_user_playing_track()
-    if current_playing is not None:
-        last_track = current_playing["item"]
-    else:
-        last_track = spotify_client.current_user_recently_played(limit=1)["items"][0][
-            "track"
-        ]
-    if last_track is not None:
-        album = make_spotify_album(last_track["album"])
-        discogs_enhance(album)
-        return make_image(make_html(album))
-
-
 def dither_image_path(path):
+    """Dither an image file at path."""
     image = Image.open(path)
     dither_image_int(image).save(path)
 
 
 def dither_image(image):
+    """Dither an image."""
     # Need to save and reopen or hitherdither errors
     tmpfile = tempfile.NamedTemporaryFile(suffix=".jpg")
     tmpfile.seek(0)

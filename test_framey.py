@@ -7,7 +7,8 @@ import requests
 import requests_mock
 from PIL import Image
 
-from framey import Album, make_image, make_qrcode, make_html
+from framey import make_image, make_qrcode
+from framey.spotify import Album, make_html
 
 
 @pytest.fixture
