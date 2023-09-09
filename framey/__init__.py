@@ -38,7 +38,7 @@ def make_qrcode(url: Optional[str], embed_image: Image, color: tuple, tmpdir) ->
 def render_image(html_dir: tempfile.TemporaryDirectory) -> Image:
     """Build a jpeg image from html. File will be dithered to work
     from inky frame colors, sized to 800x480. Directory should include
-    a file named framey.html."""
+    a file named index.html."""
     with tempfile.NamedTemporaryFile(
         suffix=".png", delete=False, dir=html_dir.name
     ) as tmp:
