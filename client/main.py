@@ -108,7 +108,7 @@ try:
     filename = "/sd/" + image
     url = ENDPOINT + image
     print("requesting " + url)
-    resp = urequests.get(url, headers=build_headers())
+    resp = urequests.get(url, headers=build_headers(filename))
     if resp.status_code == 304:
         print("image unchanged")
     else:
@@ -117,7 +117,7 @@ try:
         write_etag(resp, filename) and gc.collect()
     gc.collect()
 except Exception as ex:
-    print("Error: " + ex)
+    print("Error: " + str(ex))
 finally:
     activity_led.off()
     button.led_off()
