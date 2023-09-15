@@ -34,9 +34,9 @@ def mount_sd_card():
     uos.mount(sdcard.SDCard(sd_spi, machine.Pin(22)), "/sd")
 
 
-def build_headers(filename):
+def build_headers():
     try:
-        with open(filename + "_etag", "r") as f:
+        with open("etag", "r") as f:
             print("reading etag")
             etag = f.read()
             return {"If-None-Match": etag}
@@ -80,10 +80,10 @@ def display_jpeg(filename):
     graphics.update()
 
 
-def write_etag(resp, filename):
+def write_etag(resp):
     if "ETag" in resp.headers:
         print("writing etag")
-        with open(filename + "_etag", "w") as f:
+        with open("etag", "w") as f:
             f.write(resp.headers["ETag"])
 
 
@@ -108,13 +108,13 @@ try:
     filename = "/sd/" + image
     url = ENDPOINT + image
     print("requesting " + url)
-    resp = urequests.get(url, headers=build_headers(filename))
+    resp = urequests.get(url, headers=build_headers())
     if resp.status_code == 304:
         print("image unchanged")
     else:
         read_jpeg(resp, filename) and gc.collect()
         display_jpeg(filename) and gc.collect()
-        write_etag(resp, filename) and gc.collect()
+        write_etag(resp) and gc.collect()
     gc.collect()
 except Exception as ex:
     print("Error: " + str(ex))
