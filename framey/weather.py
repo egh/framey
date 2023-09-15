@@ -16,136 +16,136 @@ HTML_TEMPLATE = importlib.resources.read_text(
 # https://gist.githubusercontent.com/stellasphere/9490c195ed2b53c707087c8c2db4ec0c/raw/7f2d37310ac5d5c309fd9d2f4dd98cc837c28237/descriptions.json
 CODES = {
     0: {
-        "day": ("Sunny", "http://openweathermap.org/img/wn/01d@2x.png"),
-        "night": ("Clear", "http://openweathermap.org/img/wn/01n@2x.png"),
+        "day": ("Sunny", "http://openweathermap.org/img/wn/01d@4x.png"),
+        "night": ("Clear", "http://openweathermap.org/img/wn/01n@4x.png"),
     },
     1: {
-        "day": ("Mainly Sunny", "http://openweathermap.org/img/wn/01d@2x.png"),
+        "day": ("Mainly Sunny", "http://openweathermap.org/img/wn/01d@4x.png"),
         "night": (
             "Mainly Clear",
-            "http://openweathermap.org/img/wn/01n@2x.png",
+            "http://openweathermap.org/img/wn/01n@4x.png",
         ),
     },
     2: {
-        "day": ("Partly Cloudy", "http://openweathermap.org/img/wn/02d@2x.png"),
-        "night": ("Partly Cloudy", "http://openweathermap.org/img/wn/02n@2x.png"),
+        "day": ("Partly Cloudy", "http://openweathermap.org/img/wn/02d@4x.png"),
+        "night": ("Partly Cloudy", "http://openweathermap.org/img/wn/02n@4x.png"),
     },
     3: {
-        "day": ("Cloudy", "http://openweathermap.org/img/wn/03d@2x.png"),
-        "night": ("Cloudy", "http://openweathermap.org/img/wn/03n@2x.png"),
+        "day": ("Cloudy", "http://openweathermap.org/img/wn/03d@4x.png"),
+        "night": ("Cloudy", "http://openweathermap.org/img/wn/03n@4x.png"),
     },
     45: {
-        "day": ("Foggy", "http://openweathermap.org/img/wn/50d@2x.png"),
-        "night": ("Foggy", "http://openweathermap.org/img/wn/50n@2x.png"),
+        "day": ("Foggy", "http://openweathermap.org/img/wn/50d@4x.png"),
+        "night": ("Foggy", "http://openweathermap.org/img/wn/50n@4x.png"),
     },
     48: {
-        "day": ("Rime Fog", "http://openweathermap.org/img/wn/50d@2x.png"),
-        "night": ("Rime Fog", "http://openweathermap.org/img/wn/50n@2x.png"),
+        "day": ("Rime Fog", "http://openweathermap.org/img/wn/50d@4x.png"),
+        "night": ("Rime Fog", "http://openweathermap.org/img/wn/50n@4x.png"),
     },
     51: {
-        "day": ("Light Drizzle", "http://openweathermap.org/img/wn/09d@2x.png"),
-        "night": ("Light Drizzle", "http://openweathermap.org/img/wn/09n@2x.png"),
+        "day": ("Light Drizzle", "http://openweathermap.org/img/wn/09d@4x.png"),
+        "night": ("Light Drizzle", "http://openweathermap.org/img/wn/09n@4x.png"),
     },
     53: {
-        "day": ("Drizzle", "http://openweathermap.org/img/wn/09d@2x.png"),
-        "night": ("Drizzle", "http://openweathermap.org/img/wn/09n@2x.png"),
+        "day": ("Drizzle", "http://openweathermap.org/img/wn/09d@4x.png"),
+        "night": ("Drizzle", "http://openweathermap.org/img/wn/09n@4x.png"),
     },
     55: {
-        "day": ("Heavy Drizzle", "http://openweathermap.org/img/wn/09d@2x.png"),
-        "night": ("Heavy Drizzle", "http://openweathermap.org/img/wn/09n@2x.png"),
+        "day": ("Heavy Drizzle", "http://openweathermap.org/img/wn/09d@4x.png"),
+        "night": ("Heavy Drizzle", "http://openweathermap.org/img/wn/09n@4x.png"),
     },
     56: {
         "day": (
             "Light Freezing Drizzle",
-            "http://openweathermap.org/img/wn/09d@2x.png",
+            "http://openweathermap.org/img/wn/09d@4x.png",
         ),
         "night": (
             "Light Freezing Drizzle",
-            "http://openweathermap.org/img/wn/09n@2x.png",
+            "http://openweathermap.org/img/wn/09n@4x.png",
         ),
     },
     57: {
-        "day": ("Freezing Drizzle", "http://openweathermap.org/img/wn/09d@2x.png"),
-        "night": ("Freezing Drizzle", "http://openweathermap.org/img/wn/09n@2x.png"),
+        "day": ("Freezing Drizzle", "http://openweathermap.org/img/wn/09d@4x.png"),
+        "night": ("Freezing Drizzle", "http://openweathermap.org/img/wn/09n@4x.png"),
     },
     61: {
-        "day": ("Light Rain", "http://openweathermap.org/img/wn/10d@2x.png"),
-        "night": ("Light Rain", "http://openweathermap.org/img/wn/10n@2x.png"),
+        "day": ("Light Rain", "http://openweathermap.org/img/wn/10d@4x.png"),
+        "night": ("Light Rain", "http://openweathermap.org/img/wn/10n@4x.png"),
     },
     63: {
-        "day": ("Rain", "http://openweathermap.org/img/wn/10d@2x.png"),
-        "night": ("Rain", "http://openweathermap.org/img/wn/10n@2x.png"),
+        "day": ("Rain", "http://openweathermap.org/img/wn/10d@4x.png"),
+        "night": ("Rain", "http://openweathermap.org/img/wn/10n@4x.png"),
     },
     65: {
-        "day": ("Heavy Rain", "http://openweathermap.org/img/wn/10d@2x.png"),
-        "night": ("Heavy Rain", "http://openweathermap.org/img/wn/10n@2x.png"),
+        "day": ("Heavy Rain", "http://openweathermap.org/img/wn/10d@4x.png"),
+        "night": ("Heavy Rain", "http://openweathermap.org/img/wn/10n@4x.png"),
     },
     66: {
-        "day": ("Freezing Rain", "http://openweathermap.org/img/wn/10d@2x.png"),
-        "night": ("Freezing Rain", "http://openweathermap.org/img/wn/10n@2x.png"),
+        "day": ("Freezing Rain", "http://openweathermap.org/img/wn/10d@4x.png"),
+        "night": ("Freezing Rain", "http://openweathermap.org/img/wn/10n@4x.png"),
     },
     67: {
-        "day": ("Freezing Rain", "http://openweathermap.org/img/wn/10d@2x.png"),
-        "night": ("Freezing Rain", "http://openweathermap.org/img/wn/10n@2x.png"),
+        "day": ("Freezing Rain", "http://openweathermap.org/img/wn/10d@4x.png"),
+        "night": ("Freezing Rain", "http://openweathermap.org/img/wn/10n@4x.png"),
     },
     71: {
-        "day": ("Light Snow", "http://openweathermap.org/img/wn/13d@2x.png"),
-        "night": ("Light Snow", "http://openweathermap.org/img/wn/13n@2x.png"),
+        "day": ("Light Snow", "http://openweathermap.org/img/wn/13d@4x.png"),
+        "night": ("Light Snow", "http://openweathermap.org/img/wn/13n@4x.png"),
     },
     73: {
-        "day": ("Snow", "http://openweathermap.org/img/wn/13d@2x.png"),
-        "night": ("Snow", "http://openweathermap.org/img/wn/13n@2x.png"),
+        "day": ("Snow", "http://openweathermap.org/img/wn/13d@4x.png"),
+        "night": ("Snow", "http://openweathermap.org/img/wn/13n@4x.png"),
     },
     75: {
-        "day": ("Heavy Snow", "http://openweathermap.org/img/wn/13d@2x.png"),
-        "night": ("Heavy Snow", "http://openweathermap.org/img/wn/13n@2x.png"),
+        "day": ("Heavy Snow", "http://openweathermap.org/img/wn/13d@4x.png"),
+        "night": ("Heavy Snow", "http://openweathermap.org/img/wn/13n@4x.png"),
     },
     77: {
-        "day": ("Snow Grains", "http://openweathermap.org/img/wn/13d@2x.png"),
-        "night": ("Snow Grains", "http://openweathermap.org/img/wn/13n@2x.png"),
+        "day": ("Snow Grains", "http://openweathermap.org/img/wn/13d@4x.png"),
+        "night": ("Snow Grains", "http://openweathermap.org/img/wn/13n@4x.png"),
     },
     80: {
-        "day": ("Light Showers", "http://openweathermap.org/img/wn/09d@2x.png"),
-        "night": ("Light Showers", "http://openweathermap.org/img/wn/09n@2x.png"),
+        "day": ("Light Showers", "http://openweathermap.org/img/wn/09d@4x.png"),
+        "night": ("Light Showers", "http://openweathermap.org/img/wn/09n@4x.png"),
     },
     81: {
-        "day": ("Showers", "http://openweathermap.org/img/wn/09d@2x.png"),
-        "night": ("Showers", "http://openweathermap.org/img/wn/09n@2x.png"),
+        "day": ("Showers", "http://openweathermap.org/img/wn/09d@4x.png"),
+        "night": ("Showers", "http://openweathermap.org/img/wn/09n@4x.png"),
     },
     82: {
-        "day": ("Heavy Showers", "http://openweathermap.org/img/wn/09d@2x.png"),
-        "night": ("Heavy Showers", "http://openweathermap.org/img/wn/09n@2x.png"),
+        "day": ("Heavy Showers", "http://openweathermap.org/img/wn/09d@4x.png"),
+        "night": ("Heavy Showers", "http://openweathermap.org/img/wn/09n@4x.png"),
     },
     85: {
-        "day": ("Snow Showers", "http://openweathermap.org/img/wn/13d@2x.png"),
-        "night": ("Snow Showers", "http://openweathermap.org/img/wn/13n@2x.png"),
+        "day": ("Snow Showers", "http://openweathermap.org/img/wn/13d@4x.png"),
+        "night": ("Snow Showers", "http://openweathermap.org/img/wn/13n@4x.png"),
     },
     86: {
-        "day": ("Snow Showers", "http://openweathermap.org/img/wn/13d@2x.png"),
-        "night": ("Snow Showers", "http://openweathermap.org/img/wn/13n@2x.png"),
+        "day": ("Snow Showers", "http://openweathermap.org/img/wn/13d@4x.png"),
+        "night": ("Snow Showers", "http://openweathermap.org/img/wn/13n@4x.png"),
     },
     95: {
-        "day": ("Thunderstorm", "http://openweathermap.org/img/wn/11d@2x.png"),
-        "night": ("Thunderstorm", "http://openweathermap.org/img/wn/11n@2x.png"),
+        "day": ("Thunderstorm", "http://openweathermap.org/img/wn/11d@4x.png"),
+        "night": ("Thunderstorm", "http://openweathermap.org/img/wn/11n@4x.png"),
     },
     96: {
         "day": (
             "Thunderstorm With Hail",
-            "http://openweathermap.org/img/wn/11d@2x.png",
+            "http://openweathermap.org/img/wn/11d@4x.png",
         ),
         "night": (
             "Thunderstorm With Hail",
-            "http://openweathermap.org/img/wn/11n@2x.png",
+            "http://openweathermap.org/img/wn/11n@4x.png",
         ),
     },
     99: {
         "day": (
             "Thunderstorm With Hail",
-            "http://openweathermap.org/img/wn/11d@2x.png",
+            "http://openweathermap.org/img/wn/11d@4x.png",
         ),
         "night": (
             "Thunderstorm With Hail",
-            "http://openweathermap.org/img/wn/11n@2x.png",
+            "http://openweathermap.org/img/wn/11n@4x.png",
         ),
     },
 }
