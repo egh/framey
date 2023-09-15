@@ -1,0 +1,7 @@
+import inky_frame
+
+SSID = "WIFI NETWORK"
+PSK = "WIFI PASSWORD"
+COUNTRY = "US"  # Change to your local two-letter ISO 3166-1 country code
+ENDPOINT = "http://retropie.local:5000/"
+BUTTONS = {inky_frame.button_a: "playing.jpeg", inky_frame.button_b: "weather.jpeg"}

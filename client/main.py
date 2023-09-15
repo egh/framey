@@ -7,17 +7,13 @@ import sdcard
 import uasyncio
 import uos
 import urequests
-import WIFI_CONFIG
+import CONFIG
 from network_manager import NetworkManager
 
 # from picographics import PicoGraphics, DISPLAY_INKY_FRAME as DISPLAY      # 5.7"
 # from picographics import PicoGraphics, DISPLAY_INKY_FRAME_4 as DISPLAY  # 4.0"
 from picographics import DISPLAY_INKY_FRAME_7 as DISPLAY  # 7.3"
 from picographics import PicoGraphics
-
-# Configure these
-ENDPOINT = "http://retropie.local:5000/"
-MAP = {inky_frame.button_a: "playing.jpeg", inky_frame.button_b: "weather.jpeg"}
 
 # Default button
 button = inky_frame.button_a
@@ -48,7 +44,7 @@ def network_connect():
     print("connecting to network")
     network_manager = NetworkManager("GB")
     uasyncio.get_event_loop().run_until_complete(
-        network_manager.client(WIFI_CONFIG.SSID, WIFI_CONFIG.PSK)
+        network_manager.client(CONFIG.SSID, CONFIG.PSK)
     )
 
 
@@ -104,9 +100,9 @@ try:
     button.led_on()
     network_connect() and gc.collect()
     mount_sd_card() and gc.collect()
-    image = MAP[button]
+    image = CONFIG.BUTTONS[button]
     filename = "/sd/" + image
-    url = ENDPOINT + image
+    url = CONFIG.ENDPOINT + image
     print("requesting " + url)
     resp = urequests.get(url, headers=build_headers())
     if resp.status_code == 304:
