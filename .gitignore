@@ -160,8 +160,6 @@ cython_debug/
 #.idea/
 
 .envrc
-*.jpeg
-*.png
 .dir-locals.el
 sample
 
