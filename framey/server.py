@@ -14,6 +14,9 @@ SCOPE = "user-library-read,user-read-currently-playing,user-read-recently-played
 
 app = Flask(__name__)
 
+# Force login if not cached.
+spotify_client = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=SCOPE)).current_user()
+
 
 def serve_image(image):
     tmpfile = tempfile.NamedTemporaryFile(suffix=".jpeg")
