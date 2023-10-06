@@ -10,11 +10,11 @@
       }
 
       .credits {
-          font-size: 9pt;
+          font-size: 10pt;
       }
 
       .name {
-          font-size: 9pt;
+          font-size: 10pt;
           font-weight: bold;
       }
 
