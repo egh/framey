@@ -39,7 +39,7 @@
 
       div.info {
           grid-column: 2 / span 2;
-          grid-row: 1;
+          grid-row: 2;
           padding: 25px;
       }
 
@@ -47,19 +47,19 @@
           display: grid;
           grid-gap: 0px; 
           grid-template-columns: 480px 160px 160px;
-          grid-template-rows: 315px 155px;
+          grid-template-rows: 155px 315px;
       }
 
       div.spotify {
           grid-column: 2;
-          grid-row: 2;
+          grid-row: 1;
           padding: 10px 5px 10px 10px;
           margin: 0px;
       }
 
       div.discogs {
           grid-column: 3;
-          grid-row: 2;
+          grid-row: 1;
           padding: 10px 10px 10px 5px;
           margin: 0px;
       }
@@ -70,6 +70,16 @@
     <div class="card">
       <div class="cover">
         <img class="cover" src="{{cover}}">
+      </div>
+      <div class="spotify">
+        {{#spotify_qrcode}}
+        <img class="spotify qrcode" src="{{spotify_qrcode}}">
+        {{/spotify_qrcode}}
+      </div>
+      <div class="discogs">
+        {{#discogs_qrcode}}
+        <img class="discogs qrcode" src="{{discogs_qrcode}}">
+        {{/discogs_qrcode}}
       </div>
       <div class="info">
         <i>{{title}}</i>
@@ -86,17 +96,6 @@
           {{/credits}}
         </span>
       </div>
-      <div class="spotify">
-        {{#spotify_qrcode}}
-        <img class="spotify qrcode" src="{{spotify_qrcode}}">
-        {{/spotify_qrcode}}
-      </div>
-      <div class="discogs">
-        {{#discogs_qrcode}}
-        <img class="discogs qrcode" src="{{discogs_qrcode}}">
-        {{/discogs_qrcode}}
-      </div>
-    </div>
-
+     </div>
   </body>
 </html>
