@@ -1,6 +1,8 @@
-# Framey
+# Frame
 
-Framey is a system to display information on an inky Frame. It consists of a client which runs on the frame and a server that runs elsewhere. The client fetches pre-dithered images from the server and displays them. The complex logic is offloaded to the server to allow more complexity in terms of what information can be fetched and more simplicity in the rendering process, by allowing the use of HTML.
+![framey example now playing](./playing.jpeg)
+
+Framey is a system to display information on an [Inky Frame](https://shop.pimoroni.com/products/inky-frame-7-3). It consists of a client which runs on the frame and a server that runs elsewhere. The client fetches pre-dithered images from the server and displays them. The complex logic is offloaded to the server to allow more complexity in terms of what information can be fetched and more simplicity in the rendering process, by allowing the use of HTML.
 
 Framey supports only two modules at the moment, a Spotify now playing module and a weather module.
 
