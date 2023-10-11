@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <style>
       * {
-          font-family: "Special Elite";
-          font-size: 14pt;
+          font-family: "IBM Plex Mono";
+          font-size: 12pt;
           background: white;
       }
 
@@ -82,12 +82,12 @@
         {{/discogs_qrcode}}
       </div>
       <div class="info">
-        <i>{{title}}</i>
+        {{title}}
         {{#year}}
         ({{year}})
         {{/year}}
         <br>
-        {{artist}}
+        <b>{{artist}}</b>
         <br>
         <br>
         <span class="credits">
